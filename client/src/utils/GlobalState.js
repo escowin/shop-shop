@@ -9,7 +9,7 @@ import { useProductReducer } from "./reducers";
 // - consumer | the means of grabbing & using provider-held data
 
 const StoreContext = createContext();
-const { Provider } = StoreContext();
+const { Provider } = StoreContext;
 
 // serves as <Provider> | defined paramters allows it to accept props
 // - value | opens up possibility to pass in more data for state if needed
