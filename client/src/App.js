@@ -16,8 +16,6 @@ import Signup from './pages/Signup';
 import Nav from './components/Nav';
 import OrderHistory from './pages/OrderHistory';
 
-import { StoreProvider } from "./utils/GlobalState"; // must be placed below nav component
-
 const httpLink = createHttpLink({
   uri: '/graphql',
 });
@@ -42,17 +40,15 @@ function App() {
     <ApolloProvider client={client}>
       <Router>
         <div>
-          <StoreProvider>
-            <Nav />
-            <Switch>
-              <Route path="/" element={Home} />
-              <Route path="/login" element={Login} />
-              <Route path="/signup" element={Signup} />
-              <Route path="/orderHistory" element={OrderHistory} />
-              <Route path="/products/:id" element={Detail} />
-              <Route element={NoMatch} />
-            </Switch>
-          </StoreProvider>
+          <Nav />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/signup" component={Signup} />
+            <Route exact path="/orderHistory" component={OrderHistory} />
+            <Route exact path="/products/:id" component={Detail} />
+            <Route component={NoMatch} />
+          </Switch>
         </div>
       </Router>
     </ApolloProvider>
