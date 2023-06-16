@@ -1,3 +1,5 @@
+import { useReducer, userReducer } from "react";
+
 // analogous to GraphQL resolvers
 import {
   UPDATE_PRODUCTS,
@@ -28,3 +30,9 @@ export const reducer = (state, action) => {
       return state;
   }
 };
+
+// useReducer | similar to useState(), but used to manage greater levels of state
+// initializes gloabel state object. provides functionality for updating state by automattically running it trough custom reducer().
+export function useProductReducer(initialState) {
+    return useReducer(reducer, initialState);
+}
