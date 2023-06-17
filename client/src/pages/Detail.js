@@ -5,20 +5,29 @@ import { useQuery } from '@apollo/client';
 import { QUERY_PRODUCTS } from '../utils/queries';
 import spinner from '../assets/spinner.gif';
 
+// global state
+import { useStoreContext } from '../utils/GlobalState';
+import { UPDATE_PRODUCTS } from '../utils/actions';
+
 function Detail() {
+  const [state, dispatch] = useStoreContext();
   const { id } = useParams();
-
   const [currentProduct, setCurrentProduct] = useState({});
-
   const { loading, data } = useQuery(QUERY_PRODUCTS);
-
-  const products = data?.products || [];
+  const { products } = state;
 
   useEffect(() => {
+    // checks global state for products array, and figures out which is the current product to display
     if (products.length) {
-      setCurrentProduct(products.find((product) => product._id === id));
+      setCurrentProduct(products.find(product => product._id === id));
+    } else if (data) {
+      // dependency array | sends useQuery() product data to global state, then runs useEffect() hook again
+      dispatch({
+        type: UPDATE_PRODUCTS,
+        products: data.prodcts
+      });
     }
-  }, [products, id]);
+  }, [products, data, dispatch, id]);
 
   return (
     <>
