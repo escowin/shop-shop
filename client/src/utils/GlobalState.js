@@ -22,8 +22,7 @@ const StoreProvider = ({ value = [], ...props }) => {
     cart: [],
     cartOpen: false
   });
-  console.log(state);
-
+  
   // returns custom <Provider> component with state object & dispatch function as data for the `value` prop.
   // `...props` is needed in return otherwise nothing on page can be rendered
   return <Provider value={[state, dispatch]} {...props} />;

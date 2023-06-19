@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useQuery } from "@apollo/client";
 
-import { QUERY_PRODUCTS } from '../utils/queries';
-import spinner from '../assets/spinner.gif';
+import { QUERY_PRODUCTS } from "../utils/queries";
+import spinner from "../assets/spinner.gif";
 
 // global state
-import { useStoreContext } from '../utils/GlobalState';
-import { UPDATE_PRODUCTS } from '../utils/actions';
-import Cart from '../components/Cart';
+import { useStoreContext } from "../utils/GlobalState";
+import {
+  UPDATE_PRODUCTS,
+  REMOVE_FROM_CART,
+  UPDATE_CART_QUANTITY,
+  ADD_TO_CART,
+} from "../utils/actions";
+import Cart from "../components/Cart";
 
 function Detail() {
   const [state, dispatch] = useStoreContext();
@@ -16,16 +21,22 @@ function Detail() {
   const [currentProduct, setCurrentProduct] = useState({});
   const { loading, data } = useQuery(QUERY_PRODUCTS);
   const { products } = state;
+  const addToCart = () => {
+    dispatch({
+      type: ADD_TO_CART,
+      product: { ...currentProduct, purchaseQuantity: 1 },
+    });
+  };
 
   useEffect(() => {
     // checks global state for products array, and figures out which is the current product to display
     if (products.length) {
-      setCurrentProduct(products.find(product => product._id === id));
+      setCurrentProduct(products.find((product) => product._id === id));
     } else if (data) {
       // dependency array | sends useQuery() product data to global state, then runs useEffect() hook again
       dispatch({
         type: UPDATE_PRODUCTS,
-        products: data.prodcts
+        products: data.prodcts,
       });
     }
   }, [products, data, dispatch, id]);
@@ -41,8 +52,8 @@ function Detail() {
           <p>{currentProduct.description}</p>
 
           <p>
-            <strong>Price:</strong>${currentProduct.price}{' '}
-            <button>Add to Cart</button>
+            <strong>Price:</strong>${currentProduct.price}{" "}
+            <button onClick={addToCart}>Add to Cart</button>
             <button>Remove from Cart</button>
           </p>
 
