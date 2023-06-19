@@ -14,6 +14,7 @@ import {
   ADD_TO_CART,
 } from "../utils/actions";
 import Cart from "../components/Cart";
+import { idbPromise } from "../utils/helpers";
 
 function Detail() {
   const [state, dispatch] = useStoreContext();
@@ -46,17 +47,30 @@ function Detail() {
   };
 
   useEffect(() => {
-    // checks global state for products array, and figures out which is the current product to display
+    // checks global state for `products` array, and figures out which is the current product to display
     if (products.length) {
       setCurrentProduct(products.find((product) => product._id === id));
+    // retrieves server data
     } else if (data) {
       // dependency array | sends useQuery() product data to global state, then runs useEffect() hook again
       dispatch({
         type: UPDATE_PRODUCTS,
-        products: data.prodcts,
+        products: data.products,
       });
+
+      // saves updated object to `products` store object in indexdb
+      data.products.forEach(product => idbPromise('products', 'put', product)) 
+    // accessing product url offline
+    } else if (!loading) {
+      // get request made to indexdb `products` object store
+      idbPromise('products', 'get').then((indexedProducts => {
+        dispatch({
+          type: UPDATE_PRODUCTS,
+          products: indexedProducts
+        });
+      }))
     }
-  }, [products, data, dispatch, id]);
+  }, [products, data, loading, dispatch, id]);
 
   return (
     <>

@@ -8,7 +8,7 @@ export function pluralize(name, count) {
 export function idbPromise(storeName, method, object) {
   return new Promise((resolve, reject) => {
     // opens connection to the `shop-shop` database with the version of 1
-    const request = windo.indexedDB.open("shop-shop", 1);
+    const request = window.indexedDB.open("shop-shop", 1);
     // creates variables to hold references to the database, transaction(tx), and object store
     let db, tx, store;
 
@@ -17,9 +17,9 @@ export function idbPromise(storeName, method, object) {
       const db = request.result;
       // creates object store for each type of data & sets primary key index to be the `_id` of the data.
       // `_id` matches MongoDB `_id` property
-      db.createStoreObject("products", { keyPath: "_id" });
-      db.createStoreObject("categories", { keyPath: "_id" });
-      db.createStoreObject("cart", { keyPath: "_id" });
+      db.createObjectStore("products", { keyPath: "_id" });
+      db.createObjectStore("categories", { keyPath: "_id" });
+      db.createObjectStore("cart", { keyPath: "_id" });
     };
 
     // handle any errors with connecting
@@ -32,7 +32,7 @@ export function idbPromise(storeName, method, object) {
       // saves a reference of the database to the `db` variable
       db = request.result;
       // opens a transaction to what's passed into `storeName` (must match one of the object store names)
-      tx = db.transaction(storeName);
+      tx = db.transaction(storeName, 'readwrite');
       // saves a reference to that object store. 
       store = tx.objectStore(storeName);
 
