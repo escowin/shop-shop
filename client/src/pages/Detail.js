@@ -31,26 +31,38 @@ function Detail() {
         _id: id,
         purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
       });
+
+      // uses existing item data & increments purchaseQuantity balue by one
+      idbPromise("cart", "put", {
+        ...itemInCart,
+        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
+      });
     } else {
       dispatch({
         type: ADD_TO_CART,
         product: { ...currentProduct, purchaseQuantity: 1 },
       });
+
+      // adds product to current shopping cart in indexedb
+      idbPromise("cart", "put", { ...currentProduct, purchaseQuantity: 1 });
     }
   };
 
   const removeFromCart = () => {
     dispatch({
       type: REMOVE_FROM_CART,
-      _id: currentProduct._id,
+      _id: currentProduct._id
     });
+
+    // offline enhancement | deletes item from indexeddb after it is removed from cart
+    idbPromise('cart', 'delete', { ...currentProduct });
   };
 
   useEffect(() => {
     // checks global state for `products` array, and figures out which is the current product to display
     if (products.length) {
       setCurrentProduct(products.find((product) => product._id === id));
-    // retrieves server data
+      // retrieves server data
     } else if (data) {
       // dependency array | sends useQuery() product data to global state, then runs useEffect() hook again
       dispatch({
@@ -59,16 +71,18 @@ function Detail() {
       });
 
       // saves updated object to `products` store object in indexdb
-      data.products.forEach(product => idbPromise('products', 'put', product)) 
-    // accessing product url offline
+      data.products.forEach((product) =>
+        idbPromise("products", "put", product)
+      );
+      // accessing product url offline
     } else if (!loading) {
       // get request made to indexdb `products` object store
-      idbPromise('products', 'get').then((indexedProducts => {
+      idbPromise("products", "get").then((indexedProducts) => {
         dispatch({
           type: UPDATE_PRODUCTS,
-          products: indexedProducts
+          products: indexedProducts,
         });
-      }))
+      });
     }
   }, [products, data, loading, dispatch, id]);
 
@@ -106,3 +120,4 @@ function Detail() {
 }
 
 export default Detail;
+// 22.3.5
